@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Art Birthday Adventure</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            min-height: 100vh;
+            padding: 2rem;
+            image-rendering: pixelated;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #00ff00;
+            text-shadow: 3px 3px 0 #005500;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .score-bar {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-item {
+            color: #ffff00;
+            font-size: 1.1rem;
+        }
+
+        .game-screen {
+            background: #0f380f;
+            border: 8px solid #306230;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 
+                0 0 0 4px #0f380f,
+                0 0 0 8px #8bac0f,
+                0 10px 30px rgba(0,0,0,0.8);
+            position: relative;
+            min-height: 900px;
+        }
+
+        .game-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.15) 3px);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .pixel-world {
+            position: relative;
+            width: 100%;
+            height: 850px;
+            background: #9bbc0f;
+            border-radius: 4px;
+        }
+
+        .pixel-world::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 172, 15, 0.3) 2px, rgba(139, 172, 15, 0.3) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139, 172, 15, 0.3) 2px, rgba(139, 172, 15, 0.3) 4px);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* SVG Road */
+        .pixel-road-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .pixel-tree {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            z-index: 5;
+        }
+
+        .tree-leaves {
+            width: 35px;
+            height: 35px;
+            background: #306230;
+            border-radius: 50%;
+            margin: 0 auto;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+        }
+
+        .tree-trunk {
+            width: 10px;
+            height: 20px;
+            background: #5a2a0f;
+            margin: 0 auto;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+        }
+
+        .pixel-stop {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.1s steps(2);
+            z-index: 100;
+            text-align: center;
+        }
+
+        .pixel-stop:hover {
+            transform: scale(1.15);
+            filter: brightness(1.2);
+        }
+
+        .stop-sprite {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 0.5rem;
+        }
+
+        .pixel-building {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: linear-gradient(90deg, transparent 30%, #ff6b9d 30%, #ff6b9d 70%, transparent 70%),
+                        linear-gradient(0deg, transparent 20%, #e5508a 20%, #e5508a 70%, transparent 70%);
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+        }
+
+        .pixel-building::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            right: 15%;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 15px solid #c44569;
+        }
+
+        .pixel-building::after {
+            content: '';
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 20px;
+            background: #5a2a0f;
+            border: 2px solid #000;
+        }
+
+        .pixel-window {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffe66d;
+            border: 1px solid #000;
+        }
+
+        .window-1 { top: 45%; left: 25%; }
+        .window-2 { top: 45%; right: 25%; }
+
+        .stop-1 .pixel-building { background: linear-gradient(90deg, transparent 30%, #ffb6d9 30%, #ffb6d9 70%, transparent 70%), linear-gradient(0deg, transparent 20%, #ff8fb9 20%, #ff8fb9 70%, transparent 70%); }
+        .stop-1 .pixel-building::before { border-bottom-color: #ff69b4; }
+
+        .stop-2 .pixel-building { background: linear-gradient(90deg, transparent 30%, #89cff0 30%, #89cff0 70%, transparent 70%), linear-gradient(0deg, transparent 20%, #5fb5e0 20%, #5fb5e0 70%, transparent 70%); }
+        .stop-2 .pixel-building::before { border-bottom-color: #4a9ed5; }
+
+        .stop-3 .pixel-building { background: linear-gradient(90deg, transparent 30%, #e6b0ff 30%, #e6b0ff 70%, transparent 70%), linear-gradient(0deg, transparent 20%, #c78ef0 20%, #c78ef0 70%, transparent 70%); }
+        .stop-3 .pixel-building::before { border-bottom-color: #b565e8; }
+
+        .stop-4 .pixel-building { background: linear-gradient(90deg, transparent 30%, #ffe66d 30%, #ffe66d 70%, transparent 70%), linear-gradient(0deg, transparent 20%, #e6c74a 20%, #e6c74a 70%, transparent 70%); }
+        .stop-4 .pixel-building::before { border-bottom-color: #d4b43c; }
+
+        .stop-5 .pixel-building { background: linear-gradient(90deg, transparent 30%, #6495ed 30%, #6495ed 70%, transparent 70%), linear-gradient(0deg, transparent 20%, #4876d9 20%, #4876d9 70%, transparent 70%); }
+        .stop-5 .pixel-building::before { border-bottom-color: #3a5fbd; }
+
+        .stop-6 .pixel-building { background: linear-gradient(90deg, transparent 30%, #40e0d0 30%, #40e0d0 70%, transparent 70%), linear-gradient(0deg, transparent 20%, #2ac4b8 20%, #2ac4b8 70%, transparent 70%); }
+        .stop-6 .pixel-building::before { border-bottom-color: #20a89f; }
+
+        .stop-7 .pixel-building { background: linear-gradient(90deg, transparent 30%, #ffd700 30%, #ffd700 70%, transparent 70%), linear-gradient(0deg, transparent 20%, #e6c200 20%, #e6c200 70%, transparent 70%); }
+        .stop-7 .pixel-building::before { border-bottom-color: #d4af37; }
+
+        .stop-icon {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            z-index: 5;
+        }
+
+        .stop-label {
+            color: #9bbc0f;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #0f380f;
+            background: rgba(15, 56, 15, 0.8);
+            padding: 0.3rem 0.6rem;
+            border-radius: 2px;
+            border: 2px solid #306230;
+        }
+
+        .pixel-car {
+            position: absolute;
+            width: 50px;
+            height: 35px;
+            z-index: 90;
+            transition: all 2s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+        }
+
+        .car-body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 10%, #3498db 10%, #3498db 90%, transparent 90%),
+                        linear-gradient(0deg, transparent 30%, #2874a6 30%, #2874a6 70%, #5dade2 70%);
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .car-window {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border: 1px solid #000;
+            top: 8px;
+        }
+
+        .car-window.left { left: 12px; }
+        .car-window.right { right: 12px; }
+
+        .car-wheel {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #2c3e50;
+            border-radius: 50%;
+            bottom: -3px;
+            border: 2px solid #1a252f;
+        }
+
+        .car-wheel.front { right: 5px; }
+        .car-wheel.back { left: 5px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background: #0f380f;
+            border: 8px solid #8bac0f;
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 0 0 4px #306230, 0 10px 40px rgba(0,0,0,0.8);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px dashed #306230;
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-title {
+            color: #00ff00;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #005500;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-subtitle {
+            color: #ffff00;
+            font-size: 1.1rem;
+        }
+
+        .task-box {
+            background: #306230;
+            border: 4px solid #9bbc0f;
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .task-label {
+            color: #ffff00;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .task-text {
+            color: #ffffff;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .pixel-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 4px solid #000;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+        }
+
+        .pixel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.5);
+        }
+
+        .pixel-btn:active {
+            transform: translateY(2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+        }
+
+        .btn-complete {
+            background: #00ff00;
+            color: #0f380f;
+        }
+
+        .btn-close {
+            background: #ff0000;
+            color: #ffffff;
+        }
+
+        .btn-complete:disabled {
+            background: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .lives {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            z-index: 1001;
+        }
+
+        /* File upload section */
+        .upload-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #0f380f;
+            border: 3px dashed #9bbc0f;
+            border-radius: 4px;
+        }
+
+        .upload-label {
+            color: #ffff00;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .upload-input {
+            width: 100%;
+            padding: 0.8rem;
+            background: #306230;
+            border: 3px solid #9bbc0f;
+            border-radius: 4px;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .upload-input::file-selector-button {
+            background: #00ff00;
+            color: #0f380f;
+            border: 2px solid #000;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .upload-preview {
+            margin-top: 0.8rem;
+            color: #00ff00;
+            font-size: 0.85rem;
+        }
+
+        .locked-building {
+            filter: grayscale(100%) brightness(0.5);
+            cursor: not-allowed !important;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            top: -10px;
+            z-index: 3000;
+            font-size: 2rem;
+            animation: confetti-fall 3s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Birthday message */
+        .birthday-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2500;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .celebration-box {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffd700 50%, #4a9ed5 100%);
+            border: 10px solid #fff;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            animation: celebrate 0.6s ease;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.05) rotate(-2deg); }
+            75% { transform: scale(1.05) rotate(2deg); }
+        }
+
+        .celebration-icon {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+            animation: bounce-big 1s ease-in-out infinite;
+        }
+
+        @keyframes bounce-big {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .celebration-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .celebration-message {
+            font-size: 1.8rem;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const stops = [
+            {
+                id: 1,
+                year: '1998',
+                era: 'Welcome to the World',
+                age: 'Age 0',
+                icon: '🍼',
+                task: 'Find something in your house that is older than you. Send me the pic!',
+                position: { left: '12%', top: '80%' }
+            },
+            {
+                id: 2,
+                year: 'Early 2000s',
+                era: 'Childhood Memories',
+                age: 'Ages 5-10',
+                icon: '🎭',
+                task: 'Take a picture from your childhood. Explain when and where it was taken. What do you remember about that day if at all? Send me the pic!',
+                position: { left: '28%', top: '65%' }
+            },
+            {
+                id: 3,
+                year: 'Middle School',
+                era: 'The Reading Years',
+                age: 'Ages 11-13',
+                icon: '📚',
+                task: 'You read SO MUCH as a kid. Find a book from your childhood and read the first page out loud dramatically - record it!',
+                position: { left: '25%', top: '45%' }
+            },
+            {
+                id: 4,
+                year: 'High School',
+                era: 'The Band Days',
+                age: 'Ages 14-18',
+                icon: '🎷',
+                task: 'You played saxophone in the school band! Hum or sing (badly, we know) the first song that comes to mind from your band days. Record it! Send me the video!',
+                position: { left: '45%', top: '48%' }
+            },
+            {
+                id: 5,
+                year: '2016-2021',
+                era: 'The Bruin Years',
+                age: 'Ages 18-22',
+                icon: '🎓',
+                task: 'UCLA! Bioengineering major, dance team, and where you met someone special 😉 Show me your best hip hop move - strike a pose or do a quick move. Send me a photo or video!',
+                position: { left: '65%', top: '52%' }
+            },
+            {
+                id: 6,
+                year: '2021-2025',
+                era: 'Graduate School & Career Launch',
+                age: 'Ages 22-26',
+                icon: '🎄',
+                task: 'Find a photo of your favorite holiday from these years (could be from your phone, social media, printed photo, etc.). Send it to me!',
+                position: { left: '70%', top: '28%' }
+            },
+            {
+                id: 7,
+                year: '2025',
+                era: 'The Present - Age 27!',
+                age: 'TODAY',
+                icon: '🎂',
+                task: 'FINAL CHALLENGE! Record a 30-60 second message. Answer: "What\'s one thing you\'re excited about for this year being 27?" OR "What\'s one thing you learned this past year?" Send me the video!',
+                position: { left: '85%', top: '15%' }
+            }
+        ];
+
+        const trees = [
+            { left: '5%', top: '12%' },
+            { left: '18%', top: '25%' },
+            { left: '8%', top: '55%' },
+            { left: '35%', top: '15%' },
+            { left: '55%', top: '20%' },
+            { left: '78%', top: '65%' },
+            { left: '92%', top: '45%' },
+            { left: '90%', top: '75%' },
+        ];
+
+        function App() {
+            const [completedStops, setCompletedStops] = useState([]);
+            const [selectedStop, setSelectedStop] = useState(null);
+            const [carPosition, setCarPosition] = useState(0);
+            const [showCelebration, setShowCelebration] = useState(false);
+            const [confettiPieces, setConfettiPieces] = useState([]);
+
+            const handleStopClick = (stop) => {
+                // Only allow clicking if it's the first stop OR previous stop is completed
+                if (stop.id === 1 || completedStops.includes(stop.id - 1)) {
+                    setSelectedStop(stop);
+                }
+            };
+
+            const triggerConfetti = () => {
+                const confettiItems = ['🎉', '🎊', '🎈', '✨', '🎂', '🎁', '⭐', '💖'];
+                const pieces = [];
+                
+                for (let i = 0; i < 50; i++) {
+                    pieces.push({
+                        id: i,
+                        emoji: confettiItems[Math.floor(Math.random() * confettiItems.length)],
+                        left: Math.random() * 100,
+                        delay: Math.random() * 0.5
+                    });
+                }
+                
+                setConfettiPieces(pieces);
+                
+                // Clear confetti after animation
+                setTimeout(() => setConfettiPieces([]), 3500);
+            };
+
+            const handleComplete = () => {
+                if (selectedStop && !completedStops.includes(selectedStop.id)) {
+                    const newCompleted = [...completedStops, selectedStop.id];
+                    setCompletedStops(newCompleted);
+                    
+                    // Only move car if not the last stop
+                    if (selectedStop.id < 7) {
+                        setCarPosition(selectedStop.id);
+                    }
+                    
+                    // If completed all 7, show celebration
+                    if (newCompleted.length === 7) {
+                        triggerConfetti();
+                        setTimeout(() => setShowCelebration(true), 500);
+                    }
+                    
+                    setSelectedStop(null);
+                }
+            };
+
+            const getCarStyle = () => {
+                const currentStop = stops[carPosition] || stops[0];
+                return {
+                    left: currentStop.position.left,
+                    top: currentStop.position.top
+                };
+            };
+
+            const isLocked = (stop) => {
+                return stop.id > 1 && !completedStops.includes(stop.id - 1);
+            };
+
+            const isCompleted = (stop) => {
+                return completedStops.includes(stop.id);
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>★ BIRTHDAY QUEST ★</h1>
+                        <div className="score-bar">
+                            <div className="score-item">SCORE: {completedStops.length * 10000}</div>
+                            <div className="score-item">COMPLETED: {completedStops.length}/7</div>
+                        </div>
+                    </div>
+
+                    <div className="game-screen">
+                        <div className="lives">♥ ♥ ♥</div>
+
+                        <div className="pixel-world">
+                            {/* Trees */}
+                            {trees.map((tree, index) => (
+                                <div key={`tree-${index}`} className="pixel-tree" style={{ left: tree.left, top: tree.top }}>
+                                    <div className="tree-leaves"></div>
+                                    <div className="tree-trunk"></div>
+                                </div>
+                            ))}
+
+                            {/* Winding Road - SVG */}
+                            <svg className="pixel-road-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                {/* Main road */}
+                                <path
+                                    d="M 12 80 Q 20 72, 28 65 Q 24 55, 25 45 Q 35 46, 45 48 Q 55 50, 65 52 Q 68 40, 70 28 Q 77 22, 85 15"
+                                    stroke="#5a5a5a"
+                                    strokeWidth="6"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                                {/* Yellow dashed line */}
+                                <path
+                                    d="M 12 80 Q 20 72, 28 65 Q 24 55, 25 45 Q 35 46, 45 48 Q 55 50, 65 52 Q 68 40, 70 28 Q 77 22, 85 15"
+                                    stroke="#ffff00"
+                                    strokeWidth="0.8"
+                                    fill="none"
+                                    strokeDasharray="3, 2"
+                                    strokeLinecap="round"
+                                />
+                            </svg>
+
+                            {/* Car */}
+                            <div className="pixel-car" style={getCarStyle()}>
+                                <div className="car-body">
+                                    <div className="car-window left"></div>
+                                    <div className="car-window right"></div>
+                                    <div className="car-wheel front"></div>
+                                    <div className="car-wheel back"></div>
+                                </div>
+                            </div>
+
+                            {/* Buildings */}
+                            {stops.map((stop, index) => (
+                                <div
+                                    key={stop.id}
+                                    className={`pixel-stop stop-${index + 1} ${isLocked(stop) ? 'locked-building' : ''} ${isCompleted(stop) ? 'completed' : ''}`}
+                                    style={{ left: stop.position.left, top: stop.position.top }}
+                                    onClick={() => handleStopClick(stop)}
+                                >
+                                    <div className="stop-sprite">
+                                        <div className="pixel-building">
+                                            <div className="pixel-window window-1"></div>
+                                            <div className="pixel-window window-2"></div>
+                                        </div>
+                                        <div className="stop-icon">{stop.icon}</div>
+                                    </div>
+                                    <div className="stop-label">
+                                        {stop.year}
+                                        {isCompleted(stop) && ' ✓'}
+                                        {isLocked(stop) && ' 🔒'}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Confetti */}
+                    {confettiPieces.map(piece => (
+                        <div
+                            key={piece.id}
+                            className="confetti"
+                            style={{
+                                left: `${piece.left}%`,
+                                animationDelay: `${piece.delay}s`
+                            }}
+                        >
+                            {piece.emoji}
+                        </div>
+                    ))}
+
+                    {/* Birthday Celebration */}
+                    {showCelebration && (
+                        <div className="birthday-celebration">
+                            <div className="celebration-box">
+                                <div className="celebration-icon">🎂</div>
+                                <div className="celebration-title">QUEST COMPLETE!</div>
+                                <div className="celebration-message">
+                                    Happy Birthday Love!<br/>
+                                    Hope you have the best year ahead!
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Modal */}
+                    {selectedStop && (
+                        <div className="modal-overlay" onClick={() => setSelectedStop(null)}>
+                            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <div className="modal-icon">{selectedStop.icon}</div>
+                                    <div className="modal-title">{selectedStop.era}</div>
+                                    <div className="modal-subtitle">{selectedStop.year} - {selectedStop.age}</div>
+                                </div>
+
+                                <div className="task-box">
+                                    <div className="task-label">► YOUR QUEST:</div>
+                                    <div className="task-text">{selectedStop.task}</div>
+                                </div>
+
+                                <div className="modal-buttons">
+                                    <button className="pixel-btn btn-close" onClick={() => setSelectedStop(null)}>
+                                        CLOSE
+                                    </button>
+                                    {!isCompleted(selectedStop) && (
+                                        <button 
+                                            className="pixel-btn btn-complete" 
+                                            onClick={handleComplete}
+                                        >
+                                            COMPLETE!
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Daily Nilay - Special Birthday Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background: #f5f5dc;
+            padding: 20px;
+            color: #000;
+        }
+
+        .newspaper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
+
+        .masthead {
+            text-align: center;
+            border-top: 4px solid #000;
+            border-bottom: 4px solid #000;
+            padding: 20px 0;
+            margin-bottom: 10px;
+        }
+
+        .newspaper-name {
+            font-size: 4em;
+            font-weight: bold;
+            font-family: 'Old English Text MT', 'Times New Roman', serif;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            font-size: 0.9em;
+            font-style: italic;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .date-info {
+            font-size: 0.85em;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            background: #000;
+            color: white;
+            padding: 8px 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 30px 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .columns {
+            column-count: 3;
+            column-gap: 30px;
+            column-rule: 1px solid #ccc;
+            text-align: justify;
+        }
+
+        .columns-2 {
+            column-count: 2;
+            column-gap: 30px;
+            column-rule: 1px solid #ccc;
+            text-align: justify;
+        }
+
+        .headline {
+            font-size: 2.5em;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 10px;
+            text-align: left;
+            break-after: avoid;
+        }
+
+        .subheadline {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            break-after: avoid;
+        }
+
+        .byline {
+            font-size: 0.9em;
+            font-style: italic;
+            margin-bottom: 10px;
+            color: #666;
+            break-after: avoid;
+        }
+
+        .article {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .article p {
+            margin-bottom: 12px;
+            text-indent: 20px;
+        }
+
+        .article p:first-of-type {
+            font-weight: bold;
+        }
+
+        .pull-quote {
+            font-size: 1.4em;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border-top: 2px solid #000;
+            border-bottom: 2px solid #000;
+            break-inside: avoid;
+        }
+
+        .sidebar {
+            border: 2px solid #000;
+            padding: 15px;
+            margin: 20px 0;
+            background: #f9f9f9;
+            break-inside: avoid;
+        }
+
+        .sidebar-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .fact-box {
+            background: #eee;
+            border: 1px solid #999;
+            padding: 15px;
+            margin: 15px 0;
+            break-inside: avoid;
+        }
+
+        .fact-box-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+        }
+
+        .comics {
+            border: 2px solid #000;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            background: white;
+        }
+
+        .comic-strip {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .comic-panel {
+            border: 2px solid #000;
+            padding: 15px;
+            width: 30%;
+            min-width: 200px;
+            margin: 10px;
+            background: white;
+        }
+
+        .classifieds {
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+
+        .classified-ad {
+            border: 1px solid #999;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
+
+        .ad-category {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .newspaper {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .columns, .columns-2 {
+                column-count: 1;
+            }
+            .newspaper {
+                padding: 20px;
+            }
+            .newspaper-name {
+                font-size: 2.5em;
+            }
+            .headline {
+                font-size: 1.8em;
+            }
+            .comic-panel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="newspaper">
+        <!-- Masthead -->
+        <div class="masthead">
+            <div class="newspaper-name">The Daily Nilay</div>
+            <div class="tagline">"All The News That's Fit To Celebrate"</div>
+        </div>
+
+        <div class="date-info">
+            <span>Special Birthday Edition</span>
+            <span><strong>November 19, 2025</strong></span>
+            <span>Vol. 27, No. 1</span>
+        </div>
+
+        <!-- FRONT PAGE NEWS -->
+        <div class="article">
+            <div class="headline">Local San Diego Native Turns 27, World Collectively Agrees He's Pretty Cool</div>
+            <div class="subheadline">Gujarati-American Engineer Continues Streak of Being Above Average at Most Things</div>
+            <div class="byline">By The Editorial Board</div>
+            
+            <div class="columns">
+                <p>SAN DIEGO, CA — In what experts are calling "yet another year of solid existence," Nilay Shah celebrated his 27th birthday today, marking another successful orbit around the sun since his arrival on November 19, 1998.</p>
+
+                <p>Born in sunny San Diego, California, Shah quickly established himself as a force to be reckoned with, though sources close to the situation report he still can't sing on key to save his life.</p>
+
+                <p>"He's accomplished a lot," said one longtime observer. "Bachelor's in bioengineering, then a master's in computer science, both from UCLA. Currently crushing it as a Machine Learning Engineer at Amgen. He even played saxophone well enough to be in the school band. But ask him to carry a tune with his voice? Absolutely hopeless."</p>
+
+                <p>The birthday boy's impressive résumé includes pioneering research in molecular space navigation (see page 2 for full coverage), an inexplicable ability to consume nuclear-level spicy food without flinching, and a dance repertoire that would make his younger self proud—despite the rhythm issues that plagued his saxophone-playing years.</p>
+
+                <div class="pull-quote">
+                    "I don't say stupid stuff." — Nilay Shah, moments before proving himself wrong
+                </div>
+
+                <p>Shah's journey from Model UN enthusiast to ML Engineer has been marked by several key characteristics: an insatiable love of reading, an infuriating tendency to play devil's advocate in every conversation, and a foodie spirit that knows no bounds. His college dance team days at UCLA also proved fateful—it's where he met someone pretty special.</p>
+
+                <p>"The man will debate anything," reports show. "Literally anything. It's both impressive and exhausting."</p>
+
+                <p>Current projects include mastering the art of pool (making significant progress), planning future adventures to Japan and Spain, and continuing his reign as the person who can handle the most spice in any given room.</p>
+
+                <div class="fact-box">
+                    <div class="fact-box-title">By The Numbers</div>
+                    <strong>27</strong> - Years of excellence<br>
+                    <strong>2</strong> - Degrees from UCLA<br>
+                    <strong>∞</strong> - Scoville units tolerated<br>
+                    <strong>1</strong> - Published research paper<br>
+                    <strong>0</strong> - Songs sung in the correct key
+                </div>
+            </div>
+        </div>
+
+        <!-- RESEARCH & TECHNOLOGY SECTION -->
+        <div class="section-header">Research & Technology</div>
+        <div class="article">
+            <div class="subheadline">UCLA Researcher Co-Authors Groundbreaking Papers in Molecular Generation</div>
+            <div class="byline">Science Desk</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; column-rule: 1px solid #ccc;">
+                <div style="grid-column: 1 / 3; column-count: 2; column-gap: 30px; column-rule: 1px solid #ccc; text-align: justify;">
+                    <p style="margin-bottom: 12px; text-indent: 20px; font-weight: bold;">In a remarkable display of academic prowess, Nilay Shah has contributed to a significant publication in the field of machine learning and computational biology, with his published work on ChemSpacE providing researchers with new tools for interpretable and interactive chemical space exploration.</p>
+
+                    <p style="margin-bottom: 12px; text-indent: 20px;">His capstone project, MolNav, focused on unsupervised discovery of disentangled directions in deep generative models and showcased his creative approach to molecule generation and drug discovery.</p>
+
+                    <p style="margin-bottom: 12px; text-indent: 20px;">"These aren't just academic exercises," explained a definitely real and not made-up expert. "ChemSpacE is an actual contribution to drug discovery and molecular design. The kind of work that could accelerate finding new therapeutics."</p>
+
+                    <p style="margin-bottom: 12px; text-indent: 20px;">Shah's transition from bioengineering to computer science proved to be the perfect combination, allowing him to bridge the gap between biological systems and computational innovation. At Amgen, he continues to apply his expertise in machine learning to advance biotechnology and drug discovery initiatives.</p>
+
+                    <p style="margin-bottom: 12px; text-indent: 20px;">His work exemplifies the growing intersection of AI and pharmaceutical research, where computational approaches are revolutionizing how we understand molecular interactions and accelerate the development of new therapeutics. From academic research to industry application, Shah's career trajectory demonstrates the real-world impact of combining biological knowledge with cutting-edge machine learning techniques.</p>
+
+                    <p style="margin-bottom: 12px; text-indent: 20px;">"The pharmaceutical industry is being transformed by AI," notes industry analysts. "Engineers like Shah who understand both the biological complexity and the computational tools needed to navigate it are increasingly valuable in pushing the field forward."</p>
+                </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div class="sidebar">
+                        <div class="sidebar-title">Career Highlights</div>
+                        <strong>Education:</strong><br>
+                        • B.S. in Bioengineering, UCLA<br>
+                        • M.S. in Computer Science, UCLA<br><br>
+                        <strong>Current Role:</strong><br>
+                        Machine Learning Engineer at Amgen<br><br>
+                        <strong>Research:</strong><br>
+                        • ChemSpacE (Published)<br>
+                        • MolNav (Capstone Project)<br>
+                        Focus: Molecular generation, deep learning, drug discovery
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOD SECTION -->
+        <div class="section-header">Food & Dining</div>
+        <div class="article">
+            <div class="subheadline">Area Man's Spice Tolerance Reaches Legendary Status; Scientists Baffled</div>
+            <div class="byline">Food Critic at Large</div>
+            
+            <div class="columns-2">
+                <p>Local foodie Nilay Shah continues to baffle medical professionals with his superhuman ability to consume spicy foods that would hospitalize mere mortals.</p>
+
+                <p>"I've seen him eat things that shouldn't be legal," reported one witness. "Ghost peppers? Child's play. Carolina Reaper? He's out here asking for seconds."</p>
+
+                <p>Shah's culinary adventures span the globe, with a particular affection for Indian cuisine—unsurprising given his Gujarati heritage. But his experimental spirit knows no bounds. Thai, Mexican, Ethiopian, Sichuan—if it's got flavor, he's interested. If it's spicy enough to make you question your life choices, he's *very* interested.</p>
+
+                <div class="fact-box">
+                    <div class="fact-box-title">Nilay's Food Philosophy</div>
+                    "Life's too short for bland food. If it's not spicy enough to make you question your choices, is it even worth eating?"
+                </div>
+
+                <p>Restaurant owners across Southern California have learned to take his "make it spicy" requests seriously, after multiple incidents of servers assuming he "doesn't really mean it" and being proven spectacularly wrong.</p>
+
+                <p>"The man asked if we could make it spicier," said one chef, still in shock. "We make it for Indian grandmothers who grew up on actual fire. He took one bite and asked if we had any ghost pepper sauce."</p>
+
+                <p>Shah's experimental approach extends beyond heat tolerance. He's known for ordering the most unusual items on menus, trying fusion combinations that shouldn't work but somehow do, and maintaining that naan is the perfect vehicle for literally any food.</p>
+            </div>
+        </div>
+
+        <!-- SPORTS SECTION -->
+        <div class="section-header">Sports & Recreation</div>
+        <div class="article">
+            <div class="subheadline">From Dance Floors to Pool Halls: The Athletic Journey of a Renaissance Man</div>
+            <div class="byline">Sports Editor</div>
+            
+            <div class="columns-2">
+                <p>While many know Nilay Shah for his academic and professional accomplishments, fewer are aware of his diverse athletic pursuits—from hip hop dance to competitive pool.</p>
+
+                <p>Shah's introduction to dance came during his college years at UCLA, where he joined a dance team and discovered a passion for hip hop—a natural performer, despite his vocal limitations. "He was in the school band playing saxophone, which he did well," notes one observer. "But the moment he tries to sing? Different story entirely."</p>
+
+                <p>The dance team days proved significant beyond just the moves—it's where life-changing connections were made.</p>
+
+                <p>These days, Shah has channeled his competitive energy into pool, where his strategic mind and steady hands are serving him well. "He approaches pool the same way he approaches everything," reports a regular playing partner. "With unnecessary analysis and the firm belief he's right."</p>
+
+                <div class="sidebar">
+                    <div class="sidebar-title">Sports Recap</div>
+                    <strong>Activities:</strong><br>
+                    • Hip Hop Dance (College)<br>
+                    • Pool (Current obsession)<br>
+                    • Various recreational sports<br>
+                    • Saxophone (School band member)<br><br>
+                    <strong>Former Allegiances:</strong><br>
+                    LA Rams (casual fan, not die-hard)
+                </div>
+
+                <p>Shah's recreational pursuits also include an impressive collection of activities he's willing to try. "If you suggest it, he'll probably do it," says a friend. "Except karaoke. We've learned that lesson."</p>
+            </div>
+        </div>
+
+        <!-- TRAVEL SECTION -->
+        <div class="section-header">Travel & Adventure</div>
+        <div class="article">
+            <div class="subheadline">Globe-Trotter Reflects on Alaska and Kauai Adventures, Eyes Japan and Spain</div>
+            <div class="byline">Travel Correspondent</div>
+            
+            <div class="columns-2">
+                <p>Nilay Shah's wanderlust has already taken him to some spectacular destinations, with Alaska and Kauai ranking among his favorites—and his bucket list shows no signs of shrinking.</p>
+
+                <p>The pristine wilderness of Alaska and the dramatic beauty of Kauai's Garden Isle left lasting impressions on the young traveler. "There's something about seeing nature at its most impressive," Shah reflected in a totally real interview we definitely conducted. "Plus, the food scenes were solid."</p>
+
+                <p>Next on the itinerary: Japan and Spain. The draw is clear—Japan offers everything from cutting-edge technology to ancient temples, incredible food culture, and cherry blossom season. Spain promises flamenco, tapas, and the kind of laid-back evening culture that Shah would absolutely appreciate.</p>
+
+                <div class="pull-quote">
+                    "You can never have too much sleep." — Nilay Shah, probably right before a nap
+                </div>
+
+                <p>"He's the kind of traveler who researches everything," notes a source. "But he's also willing to just wander and see where it takes him. Usually to a restaurant. Always to a restaurant, actually."</p>
+            </div>
+        </div>
+
+        <!-- OPINION SECTION -->
+        <div class="section-header">Opinion & Editorial</div>
+        <div class="article">
+            <div class="subheadline">In Defense of Playing Devil's Advocate: One Man's Quest to Make Every Conversation a Debate</div>
+            <div class="byline">Op-Ed</div>
+            
+            <div class="columns">
+                <p>There exists in this world a rare breed of human—one who cannot hear an opinion without immediately constructing the counter-argument. Enter Nilay Shah, professional devil's advocate and part-time source of friendly frustration.</p>
+
+                <p>"Is it annoying? Sometimes," admits basically everyone who knows him. "Is it also kind of impressive? Unfortunately, yes."</p>
+
+                <p>Shah's propensity for argument traces back to his Model UN days, where he honed the art of defending positions he may not even agree with, just to ensure all perspectives are considered. Some call it intellectual rigor. Others call it "that thing he does that makes dinner conversations take three times longer than necessary."</p>
+
+                <div class="fact-box">
+                    <div class="fact-box-title">Famous Debates Started By Nilay</div>
+                    • At what age is it okay for parents to swap their kids if they find out there was a mistake at the hospital? (Controversial)<br>
+                    • Luxury items are not worth it except for cars (Still defending this one)<br>
+                    • Are polygamous relationships the way forward for society? (Everyone regrets asking)<br>
+                    • Every single thing ever said in his presence (Ongoing)
+                </div>
+
+                <p>But there's method to the madness. Shah's devil's advocacy often uncovers blind spots, strengthens arguments, and occasionally—begrudgingly—makes people see things from new angles.</p>
+
+                <p>"The thing is," explains one frequent debate opponent, "he's usually making good points. Which is the worst part. You can't even be mad because he's being intellectually honest. It's infuriating."</p>
+
+                <p>This natural inclination toward debate, combined with his voracious reading habits and academic background, has created what can only be described as a "walking, talking, devil's advocate machine."</p>
+
+                <p>Yet beneath the argumentation lies a genuine desire to understand all sides of an issue. Shah isn't contrarian for the sake of being difficult (well, not always)—he's curious about why people think what they think, and how beliefs hold up under scrutiny.</p>
+
+                <p>As he enters his 27th year, Shah shows no signs of slowing down his debate habits. If anything, his growing expertise in ML and biotech has simply expanded the range of topics he can argue about.</p>
+            </div>
+        </div>
+
+        <!-- ARTS & CULTURE -->
+        <div class="section-header">Arts & Culture</div>
+        <div class="article">
+            <div class="subheadline">From Percy Jackson to Warriors: A Literary Journey Through Nilay's Bookshelves</div>
+            <div class="byline">Culture Desk</div>
+            
+            <div class="columns-2">
+                <p>Long before he was navigating molecular space, Nilay Shah was navigating the worlds of Percy Jackson, the Clans of Warriors, and countless other literary adventures.</p>
+
+                <p>Growing up, Shah was "that kid who always had a book," according to historical records (and people's memories). Percy Jackson introduced him to Greek mythology through a modern lens. The Warriors series immersed him in the complex politics of feral cat Clans. Model UN gave him an outlet for his love of debate and geopolitics.</p>
+
+                <p>More recently, Shah has devoured Brandon Sanderson's Mistborn series and the romantasy world of Fourth Wing, proving his reading tastes remain as eclectic as his food preferences.</p>
+
+                <div class="sidebar">
+                    <div class="sidebar-title">Required Reading: Nilay's Favorites</div>
+                    • Percy Jackson series<br>
+                    • Warriors series<br>
+                    • Mistborn trilogy<br>
+                    • Fourth Wing<br>
+                    • Too many others to list
+                </div>
+
+                <p>"He reads the way he eats," observes someone who definitely exists. "Voraciously and with a preference for things with a kick."</p>
+            </div>
+        </div>
+
+        <!-- COMICS -->
+        <div class="section-header">Comics & Horoscope</div>
+        <div class="comics">
+            <h3 style="margin-bottom: 20px;">The Adventures of Nilay</h3>
+            <div class="comic-strip">
+                <div class="comic-panel">
+                    <strong>Panel 1:</strong><br>
+                    Nilay: "Actually, if you think about it..."<br>
+                    Friend: "Oh no."
+                </div>
+                <div class="comic-panel">
+                    <strong>Panel 2:</strong><br>
+                    Nilay: "I'm just playing devil's advocate here..."<br>
+                    Friend: "It's happening."
+                </div>
+                <div class="comic-panel">
+                    <strong>Panel 3:</strong><br>
+                    Nilay: "I don't say stupid stuff."<br>
+                    Narrator: "He would, in fact, say stupid stuff later that day."
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; padding: 20px; border: 2px solid #000;">
+                <h3>🔮 Birthday Horoscope 🔮</h3>
+                <p style="font-style: italic; margin-top: 15px; text-align: left;">
+                    <strong>SCORPIO (Nov 19):</strong> The stars indicate you will continue to tolerate spice levels that would hospitalize normal humans. Your natural inclination to argue will serve you well this year, especially in team meetings where everyone is definitely thrilled to hear the counter-argument. Lucky numbers: 27, 369 (your latent space dimensions), 2.6 billion (the cost of drug development you're helping reduce). Avoid: Karaoke bars, musical pitch recognition tests, and agreeing with people on the first try.
+                </p>
+            </div>
+        </div>
+
+        <!-- CLASSIFIEDS -->
+        <div class="section-header">Classifieds</div>
+        <div class="classifieds">
+            <div class="columns-2">
+                <div class="classified-ad">
+                    <div class="ad-category">PERSONALS</div>
+                    WANTED: Someone to debate with about literally anything. Must be willing to hear "actually, if you think about it..." at least 47 times per day. Spice tolerance a plus. Contact: N. Shah
+                </div>
+
+                <div class="classified-ad">
+                    <div class="ad-category">SERVICES</div>
+                    PROFESSIONAL DEVIL'S ADVOCATE available for hire. Will argue any position. Experience with Model UN, scientific research, and making simple conversations unnecessarily complex. Rates negotiable.
+                </div>
+
+                <div class="classified-ad">
+                    <div class="ad-category">FOR SALE</div>
+                    VOICE LESSONS: Never used. Still in original packaging. Previous owner discovered he plays saxophone beautifully but singing is a lost cause. Free to good home (or bad home, doesn't matter).
+                </div>
+
+                <div class="classified-ad">
+                    <div class="ad-category">LOST & FOUND</div>
+                    LOST: My ability to sing on key. If found, please don't return it. I've made peace with this. Also lost: Any meal that wasn't spicy enough. Assumed dead.
+                </div>
+
+                <div class="classified-ad">
+                    <div class="ad-category">HELP WANTED</div>
+                    SEEKING: Reading recommendations that can keep pace with rapid consumption rate. Must be engaging, well-written, and available in series form. Fantasy/sci-fi preferred. Apply within.
+                </div>
+
+                <div class="classified-ad">
+                    <div class="ad-category">ANNOUNCEMENTS</div>
+                    BIRTHDAY CELEBRATION in progress! All are invited to celebrate 27 years of Nilay Shah being generally excellent at most things. BYOS (Bring Your Own Spice tolerance).
+                </div>
+
+                <div class="classified-ad">
+                    <div class="ad-category">REAL ESTATE</div>
+                    TRAVEL DESTINATIONS WANTED: Currently accepting applications from Japan and Spain. Must offer: excellent food, rich culture, and opportunities for adventure. References from Alaska and Kauai available upon request.
+                </div>
+
+                <div class="classified-ad">
+                    <div class="ad-category">PUBLIC NOTICE</div>
+                    The Editorial Board of The Daily Nilay would like to formally acknowledge that the subject of this newspaper is, despite his many quirks (arguing, spice obsession, musical limitations), actually pretty awesome. Happy Birthday! 🎂
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #000; font-size: 0.9em; font-style: italic;">
+            © 2025 The Daily Nilay • Special Birthday Edition • "All The News That's Fit To Celebrate"
+        </div>
+    </div>
+</body>
+</html>

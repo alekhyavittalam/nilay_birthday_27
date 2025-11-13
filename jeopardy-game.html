@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Jeopardy! 🎉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 3.5em;
+            color: #FFD700;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #FFF;
+            font-weight: normal;
+        }
+
+        .score-board {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .score {
+            font-size: 2em;
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .jeopardy-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .category-header {
+            background: #060CE9;
+            padding: 20px 10px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clue-card {
+            background: #060CE9;
+            padding: 40px 10px;
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #FFD700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clue-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            background: #0810F5;
+        }
+
+        .clue-card.answered {
+            background: #001a4d;
+            color: #004080;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .clue-card.answered:hover {
+            transform: none;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #060CE9;
+            padding: 50px;
+            border-radius: 15px;
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .modal-category {
+            font-size: 1.5em;
+            color: #FFD700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .modal-value {
+            font-size: 3em;
+            color: #FFD700;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .modal-question {
+            font-size: 2em;
+            color: white;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .modal-answer {
+            font-size: 1.8em;
+            color: #90EE90;
+            margin-bottom: 30px;
+            display: none;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .modal-answer.show {
+            display: block;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-reveal {
+            background: #FFD700;
+            color: #060CE9;
+        }
+
+        .btn-reveal:hover {
+            background: #FFC700;
+            transform: scale(1.05);
+        }
+
+        .btn-correct {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-correct:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        .btn-close {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-close:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .instructions {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .instructions p {
+            font-size: 1.1em;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .jeopardy-board { gap: 5px; }
+            .category-header { font-size: 0.8em; padding: 10px 5px; min-height: 60px; }
+            .clue-card { font-size: 1.5em; padding: 20px 5px; min-height: 80px; }
+            .modal-content { padding: 30px 20px; }
+            .modal-question { font-size: 1.3em; }
+            .modal-answer { font-size: 1.2em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎂 BIRTHDAY JEOPARDY! 🎉</h1>
+            <p class="subtitle">Test Your Knowledge!</p>
+        </header>
+
+        <div class="score-board">
+            <div class="score">Score: $<span id="score">0</span></div>
+        </div>
+
+        <div class="jeopardy-board">
+            <!-- Category Headers -->
+            <div class="category-header">Model Behavior</div>
+            <div class="category-header">It's a Wild Life</div>
+            <div class="category-header">Spice & Everything Nice</div>
+            <div class="category-header">Nilay's Favorites</div>
+            <div class="category-header">Quote or Misquote?</div>
+
+            <!-- $100 Row -->
+            <div class="clue-card" data-category="ML & Bio-Tech Buzz" data-value="100" data-question="You worked on two major research projects in molecular generation - one focused on unsupervised discovery (MolNav) and one focused on interpretable chemical space exploration. Name both projects." data-answer="What are MolNav and ChemSpacE?">$100</div>
+            <div class="clue-card" data-category="Wild Kingdom" data-value="100" data-question="This flightless bird native to New Zealand can live up to 60 years and lays one of the largest eggs relative to body size." data-answer="What is a Kiwi?">$100</div>
+            <div class="clue-card" data-category="Foodie Files" data-value="100" data-question="This popular Indian flatbread can be leavened or unleavened and is often cooked in a tandoor oven." data-answer="What is Naan?">$100</div>
+            <div class="clue-card" data-category="His Favorites" data-value="100" data-question="In Percy Jackson, this specific title is given to the prophecy child who will decide Olympus's fate on their 16th birthday - Luke Castellan was also this, making him Percy's dark mirror." data-answer="What is the Child of the Eldest Gods (or Child of the Great Prophecy)?">$100</div>
+            <div class="clue-card" data-category="Did You Say This?" data-value="100" data-question="'Opposite of useful' - Did he say this?" data-answer="YES! He said this (probably describing someone or something useless in the most indirect way possible).">$100</div>
+
+            <!-- $200 Row -->
+            <div class="clue-card" data-category="ML & Bio-Tech Buzz" data-value="200" data-question="ChemSpacE identifies this type of boundary in the latent space which separates groups of molecules by their properties (like drug-like vs drug-unlike)." data-answer="What is a property separation boundary (or hyperplane)?">$200</div>
+            <div class="clue-card" data-category="Wild Kingdom" data-value="200" data-question="An octopus has three of these vital organs pumping blue blood through its body." data-answer="What are hearts?">$200</div>
+            <div class="clue-card" data-category="Foodie Files" data-value="200" data-question="This spice blend is essential to Indian cooking and typically includes coriander, cumin, cardamom, cloves, and cinnamon." data-answer="What is Garam Masala?">$200</div>
+            <div class="clue-card" data-category="His Favorites" data-value="200" data-question="In Mistborn, Allomancy involves burning metals - but Feruchemy and Hemalurgy complete the metallic arts. Name the specific metal that, when spiked through someone, can steal ANY Allomantic or Feruchemical power." data-answer="What is Atium (or an Atium spike)?">$200</div>
+            <div class="clue-card" data-category="Did You Say This?" data-value="200" data-question="'Is the pope still catholic? Does the sun still set in the west? Is your name dum aloo?' - Did he say this?" data-answer="YES! He said this when responding to an obvious question with maximum sarcasm.">$200</div>
+
+            <!-- $300 Row -->
+            <div class="clue-card" data-category="ML & Bio-Tech Buzz" data-value="300" data-question="MolNav used RCA (Reconstructor Classification Accuracy) while ChemSpacE introduced these two success rate metrics with strict and relaxed variants." data-answer="What are SSR (Strict Success Rate) and RSR (Relaxed Success Rate)?">$300</div>
+            <div class="clue-card" data-category="Wild Kingdom" data-value="300" data-question="Sloths only defecate once a week and can lose up to 30% of their body weight when they do this." data-answer="What is poop (or defecate)?">$300</div>
+            <div class="clue-card" data-category="Foodie Files" data-value="300" data-question="This cooking technique, whose name means 'sealed cooking' in French, involves cooking food slowly in vacuum-sealed bags in temperature-controlled water." data-answer="What is Sous Vide?">$300</div>
+            <div class="clue-card" data-category="His Favorites" data-value="300" data-question="Kauai's Mount Waialeale receives approximately this many inches of rain annually, making it one of Earth's wettest spots - within 50 inches for full credit." data-answer="What is 450-460 inches (accept 400-510)?">$300</div>
+            <div class="clue-card" data-category="Did You Say This?" data-value="300" data-question="'I fell asleep for 5 hours' - Did he say this?" data-answer="NO! He said 'I fell asleep for 2 hours' - but nice try! He's capable of napping, but not THAT much.">$300</div>
+
+            <!-- $400 Row -->
+            <div class="clue-card" data-category="ML & Bio-Tech Buzz" data-value="400" data-question="Your research tested molecule generation on three datasets: QM9 (134k molecules), this dataset with 249,455 drug-like molecules, and ChEMBL with 1.8 million molecules." data-answer="What is ZINC250K (or ZINC)?">$400</div>
+            <div class="clue-card" data-category="Wild Kingdom" data-value="400" data-question="This animal can regenerate not just limbs but also parts of its heart, brain, and spinal cord, making it a key species in regenerative medicine research." data-answer="What is an Axolotl (or salamander)?">$400</div>
+            <div class="clue-card" data-category="Foodie Files" data-value="400" data-question="This fermentation process breaks down lactose in milk using bacteria, creating yogurt, and has been practiced for over 5,000 years." data-answer="What is Lacto-fermentation?">$400</div>
+            <div class="clue-card" data-category="His Favorites" data-value="400" data-question="In Warriors, this ancient cat is the founder of SkyClan who appears in visions, and his name is literally 'Sky' in the warrior naming system - he helped Firestar rebuild the lost fifth clan." data-answer="Who is Skystar (or Clear Sky)?">$400</div>
+            <div class="clue-card" data-category="Did You Say This?" data-value="400" data-question="'She can be tough but I love prickly dum aloo' - Did he say this?" data-answer="YES! He said this about you - acknowledging you can be tough but expressing his love anyway (dum aloo is you, prickly is the vibe).">$400</div>
+
+            <!-- $500 Row -->
+            <div class="clue-card" data-category="ML & Bio-Tech Buzz" data-value="500" data-question="Both MolNav and ChemSpacE are this type of method, meaning they can work with any pre-trained generative model like MoFlow or HierVAE without retraining." data-answer="What is model-agnostic?">$500</div>
+            <div class="clue-card" data-category="Wild Kingdom" data-value="500" data-question="The mantis shrimp can punch with the force of a .22 caliber bullet and see 16 color receptors compared to humans' 3, allowing it to see this type of light." data-answer="What is ultraviolet or polarized light?">$500</div>
+            <div class="clue-card" data-category="Foodie Files" data-value="500" data-question="This chemical reaction between amino acids and sugars causes browning and develops complex flavors when cooking meat, bread crusts, and roasted coffee." data-answer="What is the Maillard Reaction?">$500</div>
+            <div class="clue-card" data-category="His Favorites" data-value="500" data-question="Japan's Hanami tradition celebrates the fleeting beauty of these specific tree blossoms which bloom for only 1-2 weeks; Spain's sobremesa literally translates to 'over the table' - name the Spanish verb for this leisurely post-meal conversation tradition." data-answer="What are Sakura (cherry blossoms) and Sobremesar (the verb form)?">$500</div>
+            <div class="clue-card" data-category="Did You Say This?" data-value="500" data-question="'Not to brag or anything, but I'm pretty sure my glutes are in peak condition. Like, objectively speaking.' - Did he say this?" data-answer="NO! But it sounds exactly like his humble-brag style. The actual words were never spoken but the ENERGY is 100% there.">$500</div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-category" id="modal-category"></div>
+            <div class="modal-value" id="modal-value"></div>
+            <div class="modal-question" id="modal-question"></div>
+            <div class="modal-answer" id="modal-answer"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-reveal" id="btn-reveal">Reveal Answer</button>
+                <button class="btn btn-correct" id="btn-correct" style="display: none;">I Got It Right! ✓</button>
+                <button class="btn btn-close" id="btn-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let currentValue = 0;
+
+        const modal = document.getElementById('modal');
+        const modalCategory = document.getElementById('modal-category');
+        const modalValue = document.getElementById('modal-value');
+        const modalQuestion = document.getElementById('modal-question');
+        const modalAnswer = document.getElementById('modal-answer');
+        const btnReveal = document.getElementById('btn-reveal');
+        const btnCorrect = document.getElementById('btn-correct');
+        const btnClose = document.getElementById('btn-close');
+        const scoreDisplay = document.getElementById('score');
+
+        // Add click handlers to all clue cards
+        document.querySelectorAll('.clue-card').forEach(card => {
+            card.addEventListener('click', function() {
+                if (this.classList.contains('answered')) return;
+
+                const category = this.dataset.category;
+                const value = this.dataset.value;
+                const question = this.dataset.question;
+                const answer = this.dataset.answer;
+
+                currentValue = parseInt(value);
+
+                modalCategory.textContent = category;
+                modalValue.textContent = '$' + value;
+                modalQuestion.textContent = question;
+                modalAnswer.textContent = answer;
+
+                modal.classList.add('active');
+                btnReveal.style.display = 'inline-block';
+                btnCorrect.style.display = 'none';
+                modalAnswer.classList.remove('show');
+            });
+        });
+
+        btnReveal.addEventListener('click', function() {
+            modalAnswer.classList.add('show');
+            btnReveal.style.display = 'none';
+            btnCorrect.style.display = 'inline-block';
+        });
+
+        btnCorrect.addEventListener('click', function() {
+            score += currentValue;
+            scoreDisplay.textContent = score;
+            
+            // Mark the card as answered
+            const activeCard = document.querySelector('.clue-card:not(.answered)');
+            document.querySelectorAll('.clue-card').forEach(card => {
+                if (card.dataset.value == currentValue && 
+                    card.dataset.category == modalCategory.textContent &&
+                    !card.classList.contains('answered')) {
+                    card.classList.add('answered');
+                    card.textContent = '';
+                }
+            });
+
+            modal.classList.remove('active');
+        });
+
+        btnClose.addEventListener('click', function() {
+            // Mark as answered but don't add to score
+            document.querySelectorAll('.clue-card').forEach(card => {
+                if (card.dataset.value == currentValue && 
+                    card.dataset.category == modalCategory.textContent &&
+                    !card.classList.contains('answered')) {
+                    card.classList.add('answered');
+                    card.textContent = '';
+                }
+            });
+            modal.classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                btnClose.click();
+            }
+        });
+
+        // Close with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                btnClose.click();
+            }
+        });
+    </script>
+</body>
+</html>
